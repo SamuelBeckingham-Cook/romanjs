@@ -97,6 +97,42 @@
             return numeralString;
         };
 
+        Roman.convertFrom = function (numeralInput) {
+
+            //TODO validate entered numerals against ones stored in the object
+
+            var returnValue = 0;
+
+            //Search the numeral array for the matching symbol and bring back the worth
+            function getNumeralValue(symbol) {
+                for (var i = 0 ; i< numerals.length; i++) {
+                    if (numerals[i].symbol === symbol) {
+                        return numerals[i].worth;
+                    }
+                }
+            }
+
+            //Iterate over each numeral in string and compare it to the next numeral
+            for (var i = 0 ; i< numeralInput.length; i++) {
+
+
+                var thisWorth = getNumeralValue(numeralInput.charAt(i).toUpperCase());
+
+                var nextWorth = getNumeralValue(numeralInput.charAt(i+1).toUpperCase());
+
+                if (thisWorth > nextWorth) {
+                    //If current numeral is worth more than the next, then it is addition notation, so the value needs to be added
+                    returnValue += thisWorth
+                }
+
+
+
+            }
+
+            return returnValue;
+
+        };
+
         return Roman;
     }
 
