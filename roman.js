@@ -64,14 +64,19 @@
                     if (totalSymbols > pnOrder) {
                         //Take away last added symbols
                         numeralString = numeralString.slice(0, (numeralString.length-lastResult));
-                        //Add the difference between totalSymbols and pnOrder to get the subtraction
-                        //order
-                        var order = totalSymbols - pnOrder;
-                        //Add subtraction symbols and then add the relevant higher symbol
-                        var symbolsToAdd = new Array(order + 1).join(numerals[i].symbol);
+
+                        //Calculate difference between current symbol and previous symbol and divide by current
+                        //symbol to calculate max number of symbols possible between two symbols
+                        //e.g. there can only ever be 4 I's between V and X regardless of how wild the pnOrder is
+                        var maxSymbols = (numerals[i-1].worth - numerals[i].worth) / numerals[i].worth;
+
+                        var symbolsToAdd;
+
                         if (lastResult === 0) {
+                            symbolsToAdd = new Array((maxSymbols - pnOrder) + 1).join(numerals[i].symbol);
                             numeralString += symbolsToAdd + numerals[i - 1].symbol;
                         } else {
+                            symbolsToAdd = new Array((maxSymbols - pnOrder) + 1).join(numerals[i].symbol);
                             numeralString += symbolsToAdd + numerals[i - 2].symbol;
                         }
                     } else {
@@ -113,16 +118,19 @@
             }
 
             //Iterate over each numeral in string and compare it to the next numeral
-            for (var i = 0 ; i< numeralInput.length; i++) {
+            for (var i = 0 ; i < numeralInput.length; i++) {
 
-
+                //Value of current numeral
                 var thisWorth = getNumeralValue(numeralInput.charAt(i).toUpperCase());
-
+                //Value
                 var nextWorth = getNumeralValue(numeralInput.charAt(i+1).toUpperCase());
 
-                if (thisWorth > nextWorth) {
+                if (thisWorth > nextWorth || nextWorth === undefined) {
                     //If current numeral is worth more than the next, then it is addition notation, so the value needs to be added
                     returnValue += thisWorth
+                } else if (thisWorth < nextWorth){
+                    //If the numeral is lower, then it is a subtraction
+                    returnValue -= thisWorth
                 }
 
 
