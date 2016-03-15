@@ -7,8 +7,10 @@
 
 (function(window){
 
+
+
     'use strict';
-    function define_library() {
+    function createRoman() {
 
         var Roman = {};
 
@@ -117,6 +119,8 @@
                 }
             }
 
+            var repeatCounter = 1;
+
             //Iterate over each numeral in string and compare it to the next numeral
             for (var i = 0 ; i < numeralInput.length; i++) {
 
@@ -126,14 +130,19 @@
                 var nextWorth = getNumeralValue(numeralInput.charAt(i+1).toUpperCase());
 
                 if (thisWorth > nextWorth || nextWorth === undefined) {
-                    //If current numeral is worth more than the next, then it is addition notation, so the value needs to be added
-                    returnValue += thisWorth
+                    //If current numeral is worth more than the next, then it is addition notation, so the value needs to be added.
+                    //The value will be multiplied based on the repeat counter
+                    returnValue += (thisWorth * repeatCounter);
+                    repeatCounter = 1;
                 } else if (thisWorth < nextWorth){
-                    //If the numeral is lower, then it is a subtraction
-                    returnValue -= thisWorth
+                    //If the numeral is lower, then it is a subtraction, but it needs to subtract the all the symbols in the subtraction notation
+                    returnValue -= (thisWorth * repeatCounter);
+                    repeatCounter = 1;
+                } else {
+                    //This symbol and the next are the same, which means it may be addition or subtraction based on the pnOrder.
+                    //We need to total the amount of identical numerals to compare to the pnOrder so we know whether to add or subtract.
+                    repeatCounter++;
                 }
-
-
 
             }
 
@@ -144,10 +153,23 @@
         return Roman;
     }
 
+
+
     if(typeof(Roman) === 'undefined'){
-        window.Roman = define_library();
+        window.Roman = createRoman();
     }
     else {
         console.log("Roman already defined.")
     }
+
+//TODO: Define methods for string/number objects
+    Number.prototype.convertTo = function() {
+        return Roman.convertTo(this);
+    };
+
+    String.prototype.convertTo = function() {
+        return Roman.convertTo(parseInt(this));
+    };
+
 })(window);
+
